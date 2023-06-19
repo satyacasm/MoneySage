@@ -8,7 +8,7 @@ module.exports = async function(req, res, next) {
 
   // Check if JWT token exists
   if (!token) {
-    return res.status(401).redirect('/admin/login');
+    return res.status(400).redirect('https://www.google.com/');
   }
 
   try {

@@ -1,11 +1,23 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
-  const handleLogin = () => {
-    console.log("Login button clicked");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const {loginUser} = useContext(AuthContext);
+  const navigate = useNavigate();
+  const handleLogin = async () => {
+    console.log({ email, password });
+    const res = await loginUser({email, password});
+    if(res) {
+      navigate("/register");
+    }
+    else {
+      alert("Invalid Credentials");
+    }
   };
 
   const fields = [
@@ -13,11 +25,15 @@ const Login = () => {
       type: "email",
       placeholder: "Email",
       key: "email",
+      value: email,
+      onChange: (e) => setEmail(e.target.value),
     },
     {
       type: "password",
       placeholder: "Password",
       key: "password",
+      value: password,
+      onChange: (e) => setPassword(e.target.value),
     },
   ];
   return (
@@ -85,7 +101,7 @@ const Login = () => {
           >
             {fields.map((field) => (
               <div className="w-2/3 h-1/5" key={field.key}>
-                <InputField type={field.type} placeholder={field.placeholder} />
+                <InputField type={field.type} placeholder={field.placeholder} onChange={field.onChange} value = {field.value}/>
               </div>
             ))}
             <div

@@ -1,28 +1,46 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import InputField from "../components/InputField";
+import { AuthContext } from "../context/AuthContext";
 
 const Register = () => {
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const { registerUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+  
   const handleRegister = () => {
-    console.log("Registering...");
+    const res = registerUser({ email, password, name });
+    if (res) {
+      navigate("/login");
+    }
+    else {
+      alert("Failed");
+    }
   };
-
   const fields = [
     {
       type: "text",
       placeholder: "Name",
       key: "name",
+      value: name,
+      onChange: (e) => setName(e.target.value),
     },
     {
       type: "email",
       placeholder: "Email",
       key: "email",
+      value: email,
+      onChange: (e) => setEmail(e.target.value),
     },
     {
       type: "password",
       placeholder: "Password",
       key: "password",
+      value: password,
+      onChange: (e) => setPassword(e.target.value),
     },
   ];
   return (
@@ -90,7 +108,7 @@ const Register = () => {
           >
             {fields.map((field) => (
               <div className="w-2/3 h-1/5" key={field.key}>
-                <InputField type={field.type} placeholder={field.placeholder} />
+                <InputField type={field.type} placeholder={field.placeholder} onChange = {field.onChange} value={field.value}/>
               </div>
             ))}
           </div>
