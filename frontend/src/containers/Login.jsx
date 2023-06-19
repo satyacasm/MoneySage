@@ -1,11 +1,25 @@
 import React from "react";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const handleLogin = () => {
     console.log("Login button clicked");
   };
+
+  const fields = [
+    {
+      type: "email",
+      placeholder: "Email",
+      key: "email",
+    },
+    {
+      type: "password",
+      placeholder: "Password",
+      key: "password",
+    },
+  ];
   return (
     <>
       <div
@@ -32,7 +46,7 @@ const Login = () => {
           flex-col
           justify-center
           items-center
-          w-[340px]
+          w-[300px]
           md:w-[350px]
           h-3/4
           lg:w-1/3
@@ -69,24 +83,11 @@ const Login = () => {
             gap-4
             "
           >
-            <div
-              id="login_email"
-              className="
-                w-2/3
-                h-1/5
-            "
-            >
-              <InputField type="email" placeholder="Email" />
-            </div>
-            <div
-              id="login_email"
-              className="
-                w-2/3
-                h-1/5
-            "
-            >
-              <InputField type="password" placeholder="Password" />
-            </div>
+            {fields.map((field) => (
+              <div className="w-2/3 h-1/5" key={field.key}>
+                <InputField type={field.type} placeholder={field.placeholder} />
+              </div>
+            ))}
             <div
               id="login-forgot"
               className="
@@ -98,10 +99,15 @@ const Login = () => {
                   p-2
             "
             >
-              <a href="#" className="
+              <Link
+                to="/login"
+                className="
             text-red
             hover:underline
-            ">Forgot Password?</a>
+            "
+              >
+                Forgot Password?
+              </Link>
             </div>
           </div>
           <div
@@ -122,13 +128,17 @@ const Login = () => {
             items-center
             justify-center
             py-4
-            justify-end
           "
           >
-            <a href="#" className="
+            <Link
+              to="/register"
+              className="
             text-red
             hover:underline
-            ">Don't have an account? Register</a>
+            "
+            >
+              Don't have an account?
+            </Link>
           </div>
         </div>
       </div>
