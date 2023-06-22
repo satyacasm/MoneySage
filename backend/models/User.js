@@ -28,6 +28,19 @@ const UserSchema=new Schema({
         type: Number,
         default: 0,
       },
+      
+      transactions: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Transaction',
+        },
+      ],
+      categories: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Category',
+        },
+      ],
       createdAt: {
         type: Date,
         default: Date.now,
