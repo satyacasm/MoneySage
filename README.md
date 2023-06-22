@@ -1,6 +1,6 @@
 # MoneySage
 
-MoneySage is a web-based personal finance tracker application built using Node.js and MongoDB. It allows users to manage their income and expenses, track their account balance, and set savings goals. The application provides an intuitive user interface for adding, editing, and deleting transactions, as well as generating reports and visualizing financial data.
+MoneySage is a web-based personal finance tracker application built using React, Node.js and MongoDB. It allows users to manage their income and expenses, track their account balance, and set savings goals. The application provides an intuitive user interface for adding, editing, and deleting transactions, as well as generating reports and visualizing financial data.
 
 ## Features
 
