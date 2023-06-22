@@ -11,6 +11,8 @@ router.get('/updateBalance',auth,userController.updateBalance);
 router.get('/updateSavingsGoal',auth,userController.updateSavingsGoal);
 router.post('/addTransaction',auth,userController.addTransaction);
 router.post('/addCategory',auth,userController.addCategory);
+router.get('/getTransactions',auth,userController.getTransactions);
+router.get('/getCategories',auth,userController.getCategories);
 
 // router.get('/protected', auth, authController.protected);
 

@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const Transaction = require('../models/Transactions');
+const Category = require('../models/Category')
 const jwt = require('jsonwebtoken');
 const config = require('config');
 const fs = require('fs');
@@ -25,6 +27,7 @@ module.exports.updateBalance = async (req, res) => {
   
       // Update the user's balance
       user.balance += req.body.amount;
+      user.updateAt = Date.now;
   
       // Save the updated user
       const updatedUser = await user.save();
@@ -59,6 +62,7 @@ module.exports.updateBalance = async (req, res) => {
       // Update the user's savings goal
 
       user.savingsGoal = req.body.amount;
+      user.updateAt = Date.now;
 
       // Save the updated user
       const updatedUser = await user.save();
@@ -91,16 +95,29 @@ module.exports.updateBalance = async (req, res) => {
       const isExpense = req.body.type === 'expense';
       // Update the user's balance based on the transaction type
       const amount = parseFloat(req.body.amount);
-      user.amount += isExpense ? -amount : amount;
+      user.balance += isExpense ? -amount : amount;
+      user.updateAt = Date.now;
       // Add the transaction to the user's list
       // Create a new transaction
+
+      function convertToDateObject(dateString) {
+        var parts = dateString.split('-');
+        var day = parseInt(parts[0], 10);
+        var month = parseInt(parts[1], 10) - 1; // Months are zero-based in Date objects
+        var year = parseInt(parts[2], 10);
+      
+        var dateObject = new Date(year, month, day);
+        return dateObject;
+      }
+
+
       const transaction = new Transaction({
         user: userId,
         category: req.body.categoryID,
         type: req.body.type,
         amount,
         description: req.body.description,
-        date: req.body.date
+        date: convertToDateObject(req.body.date)
       });
 
       // Save the transaction
@@ -135,8 +152,9 @@ module.exports.updateBalance = async (req, res) => {
       // Add the category
       const category = new Category({
          user : userId,
-        name: categoryName 
+        name: req.body.categoryName 
       });
+      user.updateAt = Date.now;
 
       // Save the category
       await category.save();
@@ -149,14 +167,15 @@ module.exports.updateBalance = async (req, res) => {
 
       res.status(201).json({ message: 'Category added successfully', category });
 
-    } catch (error) { 
+    } catch (error) {
       console.error(error);
-      res.status(500).json({ msg: 'Server error' });
+      throw err;
+      // res.status(500).json({ msg: 'Server error' });
     }
   }
 
   //Get all categories
-  module.exports.getAllCategories = async (req, res) => {
+  module.exports.getCategories = async (req, res) => {
     try {
       // Retrieve the JWT token from the request cookies
       const token = req.cookies.jwt;
@@ -176,7 +195,7 @@ module.exports.updateBalance = async (req, res) => {
   };
 
   //Get ALl Transactions
-  module.exports.getAllTransactions = async (req, res) => {
+  module.exports.getTransactions = async (req, res) => {
     try {
       // Retrieve the JWT token from the request cookies
       const token = req.cookies.jwt;
