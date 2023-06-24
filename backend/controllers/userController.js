@@ -1,6 +1,5 @@
 const User = require('../models/User');
 const Transaction = require('../models/Transactions');
-const Category = require('../models/Category')
 const jwt = require('jsonwebtoken');
 const config = require('config');
 const fs = require('fs');
@@ -109,11 +108,14 @@ module.exports.updateBalance = async (req, res) => {
         var dateObject = new Date(year, month, day);
         return dateObject;
       }
-
+      const categoryExists = user.categories.includes(req.body.categoryName);
+      if (!categoryExists) {
+        return res.status(400).json({ msg: 'Category does not exist for the user' });
+      }
 
       const transaction = new Transaction({
         user: userId,
-        category: req.body.categoryID,
+        category: req.body.categoryName,
         type: req.body.type,
         amount,
         description: req.body.description,
@@ -150,17 +152,12 @@ module.exports.updateBalance = async (req, res) => {
         return res.status(404).json({ msg: 'User not found' });
       }
       // Add the category
-      const category = new Category({
-         user : userId,
-        name: req.body.categoryName 
-      });
+      
       user.updateAt = Date.now;
 
-      // Save the category
-      await category.save();
-
+      
       // Add the category to the user's categories array
-      user.categories.push(category);
+      user.categories.push(req.body.categoryName);
 
       // Save the updated user
       await user.save();
@@ -168,8 +165,7 @@ module.exports.updateBalance = async (req, res) => {
       res.status(201).json({ message: 'Category added successfully', category });
 
     } catch (error) {
-      console.error(error);
-      throw err;
+      res.json(error);
       // res.status(500).json({ msg: 'Server error' });
     }
   }
@@ -183,11 +179,13 @@ module.exports.updateBalance = async (req, res) => {
       const decodedToken = jwt.verify(token, config.get('jwtsecret'));
       // Retrieve the userId from the decoded token
       const userId = decodedToken.id;
-  
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found' });
+      }
       // Find all categories for the user
-      const categories = await Category.find({ user: userId });
-  
-      res.status(200).json(categories);
+      const categories = user.categories;
+      res.json(categories);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Internal server error' });
